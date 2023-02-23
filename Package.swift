@@ -13,6 +13,12 @@ let package = Package(
         .target(
             name: "Example",
             dependencies: []),
+
+        .binaryTarget(
+            name: "SwiftLint",
+            url: "https://github.com/realm/SwiftLint/releases/download/0.51.0-rc.2/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: "1baf4850298292c0232cc0f6ca192ab2778b1bf26ee50a1f324857b6f6eeed58"
+        ),
         .plugin(
             name: "LintFixCommandPlugin",
             capability: .command(
@@ -21,7 +27,8 @@ let package = Package(
                     description: "Fix lint issues"
                 ),
                 permissions: [.writeToPackageDirectory(reason: "Fix lint issues")]
-            )
-        )
+            ),
+            dependencies: ["SwiftLint"]
+        ),
     ]
 )
