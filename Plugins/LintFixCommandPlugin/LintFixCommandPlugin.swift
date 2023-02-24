@@ -3,6 +3,44 @@ import PackagePlugin
 
 @main
 struct LintFixCommandPlugin: CommandPlugin {
+    func performCommand(context: PackagePlugin.PluginContext, arguments: [String]) async throws {
+        let toolURL = URL(fileURLWithPath: try context.tool(named: "swiftlint").path.string)
+        
+        var argumentExtractor = ArgumentExtractor(arguments)
+        
+        let configFilePath: String?
+        if let config = argumentExtractor.extractOption(named: "config").first {
+            configFilePath = config
+            print("configuration file found: \(config)")
+        } else {
+            let defaultConfigFilePath = context.package.directory.appending(".swiftlint.yml").string
+            if FileManager.default.fileExists(atPath: defaultConfigFilePath) {
+                configFilePath = defaultConfigFilePath
+                print("configuration file found: \(defaultConfigFilePath)")
+            } else {
+                configFilePath = nil
+                Diagnostics.warning("configuration file not found")
+            }
+        }
+        
+        let packageSwiftPath = context.package.directory.appending("Package.swift").string
+        try applyLintFix(
+            toolURL: toolURL,
+            targetPath: packageSwiftPath,
+            configFilePath: configFilePath
+        )
+        
+        for target in context.package.targets {
+            guard let target = target as? SourceModuleTarget else { continue }
+            
+            try applyLintFix(
+                toolURL: toolURL,
+                targetPath: target.directory.string,
+                configFilePath: configFilePath
+            )
+        }
+    }
+    
     private func applyLintFix(toolURL: URL, targetPath: String, configFilePath: String?) throws {
         let process = Process()
         
@@ -21,33 +59,6 @@ struct LintFixCommandPlugin: CommandPlugin {
             print("lint fixing applied to \(targetPath)")
         } else {
             Diagnostics.error("lint fixing application failed: \(process.terminationReason)(\(process.terminationStatus))")
-        }
-    }
-    
-    func performCommand(context: PackagePlugin.PluginContext, arguments: [String]) async throws {
-        let toolURL = URL(fileURLWithPath: try context.tool(named: "swiftlint").path.string)
-        
-        let configFilePath = context.package.directory.appending(".swiftlint.yml").string
-        let configFileExists = FileManager.default.fileExists(atPath: configFilePath)
-        if !configFileExists {
-            Diagnostics.warning("configuration file not found at \(configFilePath)")
-        }
-        
-        let packageSwiftPath = context.package.directory.appending("Package.swift").string
-        try applyLintFix(
-            toolURL: toolURL,
-            targetPath: packageSwiftPath,
-            configFilePath: configFileExists ? configFilePath : nil
-        )
-        
-        for target in context.package.targets {
-            guard let target = target as? SourceModuleTarget else { continue }
-            
-            try applyLintFix(
-                toolURL: toolURL,
-                targetPath: target.directory.string,
-                configFilePath: configFileExists ? configFilePath : nil
-            )
         }
     }
 }
