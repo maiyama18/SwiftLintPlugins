@@ -6,14 +6,18 @@ import PackageDescription
 let package = Package(
     name: "SwiftLintPlugins",
     products: [
-        .plugin(name: "LintFixCommandPlugin", targets: ["LintFixCommandPlugin"]),
+        .library(name: "Example", targets: ["Example"]),
+        
         .plugin(name: "LintCheckCommandPlugin", targets: ["LintCheckCommandPlugin"]),
+        .plugin(name: "LintFixCommandPlugin", targets: ["LintFixCommandPlugin"]),
+        .plugin(name: "LintCheckBuildToolPlugin", targets: ["LintCheckBuildToolPlugin"]),
     ],
     dependencies: [],
     targets: [
         .target(
             name: "Example",
-            dependencies: []),
+            dependencies: [],
+            plugins: ["LintCheckBuildToolPlugin"]),
 
         .binaryTarget(
             name: "SwiftLint",
@@ -40,6 +44,11 @@ let package = Package(
                 ),
                 permissions: [.writeToPackageDirectory(reason: "Fix lint issues")]
             ),
+            dependencies: ["SwiftLint"]
+        ),
+        .plugin(
+            name: "LintCheckBuildToolPlugin",
+            capability: .buildTool(),
             dependencies: ["SwiftLint"]
         ),
     ]
