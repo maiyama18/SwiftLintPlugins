@@ -46,7 +46,7 @@ struct LintFixCommandPlugin: CommandPlugin {
         
         process.executableURL = toolURL
         
-        var arguments = [targetPath, "--fix"]
+        var arguments = [targetPath, "--fix", "--format"]
         if let configFilePath {
             arguments.append(contentsOf: ["--config", configFilePath])
         }
