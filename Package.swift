@@ -6,19 +6,12 @@ import PackageDescription
 let package = Package(
     name: "SwiftLintPlugins",
     products: [
-        .library(name: "Example", targets: ["Example"]),
-        
         .plugin(name: "LintCheckCommandPlugin", targets: ["LintCheckCommandPlugin"]),
         .plugin(name: "LintFixCommandPlugin", targets: ["LintFixCommandPlugin"]),
         .plugin(name: "LintCheckBuildToolPlugin", targets: ["LintCheckBuildToolPlugin"]),
     ],
     dependencies: [],
     targets: [
-        .target(
-            name: "Example",
-            dependencies: [],
-            plugins: ["LintCheckBuildToolPlugin"]),
-
         .binaryTarget(
             name: "SwiftLint",
             url: "https://github.com/realm/SwiftLint/releases/download/0.51.0-rc.2/SwiftLintBinary-macos.artifactbundle.zip",
