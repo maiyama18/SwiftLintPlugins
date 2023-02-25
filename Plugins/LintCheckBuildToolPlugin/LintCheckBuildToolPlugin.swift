@@ -21,12 +21,13 @@ import PackagePlugin
         }
         
         return [
-            .prebuildCommand(
+            .buildCommand(
                 displayName: "SwiftLint for \(target.name)",
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: arguments,
-                outputFilesDirectory: cacheDirectory
-            )
+                inputFiles: inputFilePaths,
+                outputFiles: [cacheDirectory]
+            ),
         ]
     }
 }
