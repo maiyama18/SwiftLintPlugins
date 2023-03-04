@@ -23,22 +23,11 @@ struct LintCheckCommandPlugin: CommandPlugin {
             }
         }
         
-        let packageSwiftPath = context.package.directory.appending("Package.swift").string
         try applyLintCheck(
             toolURL: toolURL,
-            targetPath: packageSwiftPath,
+            targetPath: context.package.directory.string,
             configFilePath: configFilePath
         )
-        
-        for target in context.package.targets {
-            guard let target = target as? SourceModuleTarget else { continue }
-            
-            try applyLintCheck(
-                toolURL: toolURL,
-                targetPath: target.directory.string,
-                configFilePath: configFilePath
-            )
-        }
     }
     
     private func applyLintCheck(toolURL: URL, targetPath: String, configFilePath: String?) throws {
