@@ -23,22 +23,11 @@ struct LintFixCommandPlugin: CommandPlugin {
             }
         }
         
-        let packageSwiftPath = context.package.directory.appending("Package.swift").string
         try applyLintFix(
             toolURL: toolURL,
-            targetPath: packageSwiftPath,
+            targetPath: context.package.directory.string,
             configFilePath: configFilePath
         )
-        
-        for target in context.package.targets {
-            guard let target = target as? SourceModuleTarget else { continue }
-            
-            try applyLintFix(
-                toolURL: toolURL,
-                targetPath: target.directory.string,
-                configFilePath: configFilePath
-            )
-        }
     }
     
     private func applyLintFix(toolURL: URL, targetPath: String, configFilePath: String?) throws {
