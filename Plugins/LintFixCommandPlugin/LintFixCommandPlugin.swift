@@ -23,9 +23,11 @@ struct LintFixCommandPlugin: CommandPlugin {
             }
         }
         
+        let targetPath = argumentExtractor.extractOption(named: "path").first ?? context.package.directory.string
+        
         try applyLintFix(
             toolURL: toolURL,
-            targetPath: context.package.directory.string,
+            targetPath: targetPath,
             configFilePath: configFilePath
         )
     }
