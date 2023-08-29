@@ -9,7 +9,7 @@ import PackagePlugin
         
         let defaultConfigFilePath = context.package.directory.appending(".swiftlint.yml").string
         
-        let cacheDirectory = context.pluginWorkDirectory.appending("Cache")
+        let cacheDirectory = context.pluginWorkDirectory
         
         var arguments: [String] = ["lint", target.directory.string, "--cache-path", cacheDirectory.string]
         if FileManager.default.fileExists(atPath: defaultConfigFilePath) {
